@@ -5,12 +5,14 @@ class AnimatedBottomBar extends StatefulWidget {
   final Duration animationDuration;
   final Function onBarTap;
   final BarStyle barStyle;
+  final int selectedBarIndex;
 
   AnimatedBottomBar(
       {this.barItems,
       this.animationDuration = const Duration(milliseconds: 500),
       this.onBarTap,
-      this.barStyle});
+      this.barStyle,
+      this.selectedBarIndex});
 
   @override
   _AnimatedBottomBarState createState() => _AnimatedBottomBarState();
@@ -47,7 +49,7 @@ class _AnimatedBottomBarState extends State<AnimatedBottomBar>
     List<Widget> _barItems = [];
     for (int i = 0; i < widget.barItems.length; i++) {
       BarItem item = widget.barItems[i];
-      bool isSelected = selectedBarIndex == i;
+      bool isSelected = i == widget.selectedBarIndex;
       _barItems.add(InkWell(
         splashColor: Colors.transparent,
         onTap: () {

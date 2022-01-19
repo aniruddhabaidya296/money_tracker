@@ -1,6 +1,7 @@
 import 'package:money_tracker/Helper/transaction_helper.dart';
 import 'package:money_tracker/components/animated_bottom_nav_bar.dart';
 import 'package:money_tracker/components/card_transaction_item.dart';
+import 'package:money_tracker/constants/colors.dart';
 import 'package:money_tracker/screen/taken.dart';
 import 'package:money_tracker/screen/home_page.dart';
 import 'package:money_tracker/screen/given.dart';
@@ -18,17 +19,17 @@ class InitialPage extends StatefulWidget {
   final List<BarItem> barItems = [
     BarItem(
       text: "Taken",
-      iconData: Icons.remove_circle_outline,
+      iconData: Icons.arrow_downward,
       color: Colors.pinkAccent,
     ),
     BarItem(
-      text: "Home",
-      iconData: Icons.home,
-      color: Colors.indigo,
+      text: "All",
+      iconData: Icons.receipt,
+      color: COLORS.deepBlue,
     ),
     BarItem(
       text: "Given",
-      iconData: Icons.add_circle_outline,
+      iconData: Icons.arrow_upward,
       color: Colors.teal,
     ),
     /*BarItem(
@@ -82,14 +83,17 @@ class _InitialPageState extends State<InitialPage> {
           customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
           if (dis.primaryVelocity > 0) {
             //User swiped from left to right
-            if (selectedBarIndex > 2) {
+            customLog("User swiped from left to right.Previous SI is $selectedBarIndex");
+            if (selectedBarIndex > 0) {
               setState(() {
                 selectedBarIndex--;
               });
             }
           } else if (dis.primaryVelocity < 0) {
             //User swiped from right to left
-            if (selectedBarIndex < 0) {
+            customLog("User swiped from right to left.Previous SI is $selectedBarIndex");
+
+            if (selectedBarIndex < 2) {
               setState(() {
                 selectedBarIndex++;
               });
@@ -98,16 +102,21 @@ class _InitialPageState extends State<InitialPage> {
         },
         child: tabs[selectedBarIndex],
       ),
-      bottomNavigationBar: AnimatedBottomBar(
-        barItems: widget.barItems,
-        animationDuration: const Duration(milliseconds: 150),
-        barStyle: BarStyle(fontSize: width * 0.045, iconSize: width * 0.07),
-        onBarTap: (index) {
-          setState(() {
-            selectedBarIndex = index;
-          });
-        },
-      ),
+      // bottomNavigationBar: AnimatedBottomBar(
+      //   barItems: widget.barItems,
+      //   animationDuration: const Duration(milliseconds: 150),
+      //   barStyle: BarStyle(
+      //     fontSize: width * 0.045,
+      //     iconSize: width * 0.07,
+      //   ),
+      //   selectedBarIndex: selectedBarIndex,
+      //   onBarTap: (index) {
+      //     customLog(index);
+      //     setState(() {
+      //       selectedBarIndex = index;
+      //     });
+      //   },
+      // ),
     );
   }
 }
