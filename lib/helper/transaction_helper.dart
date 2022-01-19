@@ -119,7 +119,7 @@ class TransactionHelper {
     return listTransaction;
   }
 
-  Future<List> getAllTransactionPortype({String type, String userId}) async {
+  Future<List> getAllTransactionBytype({String type, String userId}) async {
     Database dbTransaction = await db;
     List listMap = await dbTransaction.rawQuery(
         "SELECT * FROM ${GlobalConstants.transactionTABLE} WHERE ${GlobalConstants.userId}='$userId' AND ${GlobalConstants.typeColumn} ='$type' ");

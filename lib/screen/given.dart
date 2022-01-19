@@ -1,5 +1,6 @@
 import 'package:money_tracker/components/timeline_item.dart';
 import 'package:flutter/material.dart';
+import 'package:money_tracker/constants/colors.dart';
 
 import '../helper/transaction_helper.dart';
 
@@ -17,7 +18,7 @@ class _GivenState extends State<Given> {
 
   _allTransactionPortype() {
     transactionHelper
-        .getAllTransactionPortype(type: "g", userId: widget.userId)
+        .getAllTransactionBytype(type: "g", userId: widget.userId)
         .then((list) {
       setState(() {
         transactionList = list;
@@ -38,28 +39,41 @@ class _GivenState extends State<Given> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.green.withOpacity(0.8),
+      // backgroundColor: Colors.green.withOpacity(0.8),
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: width * 0.05, top: width * 0.2),
-              child: Text(
-                "Given",
-                style: TextStyle(
-                    color: Colors.white, //Colors.grey[400],
+            Container(
+              padding: EdgeInsets.only(
+                left: width * 0.03,
+                right: width * 0.03,
+                top: width * 0.18,
+                bottom: width * 0.05,
+              ),
+              height: height * 0.15,
+              color: Colors.amber,
+              alignment: Alignment.centerLeft,
+              child: Container(
+                // padding: EdgeInsets.only(left: width * 0.05, top: width * 0.2),
+                child: Text(
+                  "Given",
+                  style: TextStyle(
+                    color: COLORS.deepBlue, //Colors.grey[400],
                     fontWeight: FontWeight.bold,
-                    fontSize: width * 0.08),
+                    fontSize: width * 0.08,
+                  ),
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: width * 0.03, top: width * 0.08),
+            Container(
               child: SizedBox(
                 width: width,
                 height: height * 0.74,
                 child: ListView.builder(
+                  padding:
+                      EdgeInsets.only(left: width * 0.03, top: width * 0.1),
                   itemCount: transactionList.length,
                   itemBuilder: (context, index) {
                     List movReverse = transactionList.reversed.toList();

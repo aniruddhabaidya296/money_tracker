@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         transactionList = list;
       });
-      print("All Mov: $transactionList");
+      print("All Transactions: $transactionList");
     });
   }
 
@@ -144,42 +144,30 @@ class _HomePageState extends State<HomePage> {
         //physics: ClampingScrollPhysics(),
         //height: height,
         //width: width,
-        child: Column(
+        child: Stack(
           children: <Widget>[
-            Stack(
+            Container(
+              margin: EdgeInsets.only(bottom: SizeConfig.blockHeight * 6),
+              width: double.infinity,
+              height: height * 0.15, //300,
+              color: Colors.amber,
+            ),
+            Column(
               children: <Widget>[
                 Container(
-                  width: double.infinity,
-                  height: height * 0.334, //300,
-                  color: Colors.white,
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
+                  width: SizeConfig.screenWidth * 0.85,
+                  margin: EdgeInsets.only(
+                    top: SizeConfig.blockHeight * 6,
+                  ),
                   child: Container(
-                      width: double.infinity,
-                      height: height * 0.28, //250,
-                      decoration: BoxDecoration(
-                          // color: Colors.lightBlue[700], //Colors.indigo[400],
-                          )),
-                ),
-                // Positioned(
-                //   top: width * 0.18, //70
-                //   left: width * 0.07, //30,
-                //   child: Text(
-                //     "Money Tracker",
-                //     style: TextStyle(
-                //         color: Colors.white, fontSize: width * 0.074 //30
-                //         ),
-                //   ),
-                // ),
-                Positioned(
-                  bottom: 0,
-                  left: width * 0.07, // 30,
-                  right: width * 0.07, // 30,
-                  child: Container(
-                    height: height * 0.25, //150,
+                    // height: height * 0.13, //150,
+                    padding: EdgeInsets.only(
+                      top: SizeConfig.blockHeight * 2,
+                      bottom: SizeConfig.blockHeight * 4,
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      vertical: SizeConfig.blockHeight * 2,
+                    ),
                     width: width * 0.1, // 70,
                     decoration: BoxDecoration(
                       color: COLORS.white,
@@ -188,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                         BoxShadow(
                             color: Colors.grey[400],
                             blurRadius: 5,
-                            offset: Offset(4, 4))
+                            offset: Offset(2, 2))
                       ],
                     ),
                     child: Column(
@@ -200,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.only(
                             left: width * 0.05,
                             top: width * 0.04,
-                            // bottom: width * 0.02,
+                            bottom: width * 0.01,
                           ),
                           child: Text(
                             netTotal.startsWith("-")
@@ -247,10 +235,9 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            Container(
-                              width: width * 0.6,
+                            Expanded(
                               child: Text(
-                                netTotal,
+                                netTotal.replaceFirst('-', ''),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: netTotal.startsWith("-")
@@ -262,38 +249,6 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(right: width * 0.04),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _dialogAddTransaction();
-                                  /* Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddReceita()));
-                                 */
-                                },
-                                child: Container(
-                                  width: width * 0.12,
-                                  height: width * 0.12, //65,
-                                  decoration: BoxDecoration(
-                                      color: COLORS.deepBlue, //Colors.indigo[400],
-                                      borderRadius: BorderRadius.circular(50),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 7,
-                                          offset: Offset(2, 2),
-                                        )
-                                      ]),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: width * 0.07,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            )
                           ],
                         ),
                         SizedBox(
@@ -302,125 +257,156 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                )
-              ],
-            ),
-            TableCalendar(
-              calendarController: calendarController,
-              locale: "en_US",
-              headerStyle: HeaderStyle(
-                formatButtonShowsNext: false,
-                formatButtonVisible: false,
-                centerHeaderTitle: true,
-              ),
-              calendarStyle: CalendarStyle(outsideDaysVisible: false),
-              daysOfWeekStyle: DaysOfWeekStyle(
-                weekdayStyle: TextStyle(color: Colors.transparent),
-                weekendStyle: TextStyle(color: Colors.transparent),
-              ),
-              rowHeight: 0,
-              initialCalendarFormat: CalendarFormat.month,
-              onVisibleDaysChanged: (dateFirst, dateLast, CalendarFormat cf) {
-                print(dateFirst);
-
-                formattedDate = formatterCalendar.format(dateFirst);
-                _allTransactionMonth(formattedDate);
-
-                print("DATE FORMATTED CALENDAR $formattedDate");
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: width * 0.04, right: width * 0.04),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Transactions",
-                    style: TextStyle(
-                        color: Colors.grey[600], fontSize: width * 0.04),
+                ),
+                TableCalendar(
+                  calendarController: calendarController,
+                  locale: "en_US",
+                  headerStyle: HeaderStyle(
+                    formatButtonShowsNext: false,
+                    formatButtonVisible: false,
+                    centerHeaderTitle: true,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(right: width * 0.02),
-                    child: Icon(
-                      Icons.sort,
-                      size: width * 0.07,
-                      color: Colors.grey[400],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: width * 0.04, right: width * 0.04, top: 0),
-              child: SizedBox(
-                width: width,
-                height: height * 0.47,
-                child: ListView.builder(
-                  itemCount: transactionList.length,
-                  itemBuilder: (context, index) {
-                    Transaction transaction = transactionList[index];
-                    Transaction ultMov = transactionList[index];
-                    return Dismissible(
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        setState(() {
-                          transactionList.removeAt(index);
-                        });
-                        transactionHelper.deleteTransaction(transaction);
-                        final snackBar = SnackBar(
-                          content: Text(
-                            "Transaction Deleted",
-                            style: TextStyle(
+                  calendarStyle: CalendarStyle(outsideDaysVisible: false),
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(color: Colors.transparent),
+                    weekendStyle: TextStyle(color: Colors.transparent),
+                  ),
+                  rowHeight: 0,
+                  initialCalendarFormat: CalendarFormat.month,
+                  onVisibleDaysChanged:
+                      (dateFirst, dateLast, CalendarFormat cf) {
+                    print(dateFirst);
+
+                    formattedDate = formatterCalendar.format(dateFirst);
+                    _allTransactionMonth(formattedDate);
+
+                    print("DATE FORMATTED CALENDAR $formattedDate");
+                  },
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.only(left: width * 0.04, right: width * 0.04),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Transactions",
+                        style: TextStyle(
+                            color: Colors.grey[600], fontSize: width * 0.04),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: width * 0.04),
+                        child: GestureDetector(
+                          onTap: () {
+                            _dialogAddTransaction();
+                            /* Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AddReceita()));
+                                 */
+                          },
+                          child: Container(
+                            width: width * 0.12,
+                            height: width * 0.12, //65,
+                            decoration: BoxDecoration(
+                                color: COLORS.deepBlue, //Colors.indigo[400],
+                                borderRadius: BorderRadius.circular(
+                                  SizeConfig.blockWidth * 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 7,
+                                    offset: Offset(2, 2),
+                                  )
+                                ]),
+                            child: Icon(
+                              Icons.add,
+                              size: width * 0.07,
                               color: Colors.white,
                             ),
                           ),
-                          duration: Duration(seconds: 2),
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15))),
-                          action: SnackBarAction(
-                            label: "Undo",
-                            textColor: Colors.white,
-                            onPressed: () {
-                              setState(() {
-                                transactionList.insert(index, ultMov);
-                              });
-                              transactionHelper.saveTransaction(ultMov);
-                            },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: width * 0.04, right: width * 0.04, top: 0),
+                  child: SizedBox(
+                    width: width,
+                    height: height * 0.47,
+                    child: ListView.builder(
+                      itemCount: transactionList.length,
+                      itemBuilder: (context, index) {
+                        Transaction transaction = transactionList[index];
+                        Transaction ultMov = transactionList[index];
+                        return Dismissible(
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            setState(() {
+                              transactionList.removeAt(index);
+                            });
+                            transactionHelper.deleteTransaction(transaction);
+                            final snackBar = SnackBar(
+                              content: Text(
+                                "Transaction Deleted",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15),
+                                      topRight: Radius.circular(15))),
+                              action: SnackBarAction(
+                                label: "Undo",
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  setState(() {
+                                    transactionList.insert(index, ultMov);
+                                  });
+                                  transactionHelper.saveTransaction(ultMov);
+                                },
+                              ),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            // _scafoldKey.currentState.showSnackBar(snackBar);
+                          },
+                          key: ValueKey(transaction.id),
+                          background: Container(
+                            padding:
+                                EdgeInsets.only(right: 10, top: width * 0.04),
+                            alignment: Alignment.topRight,
+                            // color: Colors.red,
+                            child: Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                              size: width * 0.07,
+                            ),
+                          ),
+                          child: TransactionCard(
+                            transaction: transaction,
+                            lastItem:
+                                transactionList[index] == transactionList.last
+                                    ? true
+                                    : false,
                           ),
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        // _scafoldKey.currentState.showSnackBar(snackBar);
                       },
-                      key: ValueKey(transaction.id),
-                      background: Container(
-                        padding: EdgeInsets.only(right: 10, top: width * 0.04),
-                        alignment: Alignment.topRight,
-                        // color: Colors.red,
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: Colors.red,
-                          size: width * 0.07,
-                        ),
-                      ),
-                      child: TransactionCard(
-                        transaction: transaction,
-                        lastItem: transactionList[index] == transactionList.last
-                            ? true
-                            : false,
-                      ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
+                // Padding(
+                //   padding: EdgeInsets.only(top: 20),
+                //   child: Text("EEEEEEEEE"),
+                // )
+              ],
             ),
-            // Padding(
-            //   padding: EdgeInsets.only(top: 20),
-            //   child: Text("EEEEEEEEE"),
-            // )
           ],
         ),
       ),

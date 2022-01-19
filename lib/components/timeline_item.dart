@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_tracker/constants/size_config.dart';
 import '../helper/transaction_helper.dart';
 
 class TimeLineItem extends StatelessWidget {
@@ -16,35 +17,21 @@ class TimeLineItem extends StatelessWidget {
 
     return Container(
       width: width,
+      margin: EdgeInsets.symmetric(horizontal: SizeConfig.blockWidth * 2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: width * 0.03,
-                    height: height * 0.015,
-                    decoration: BoxDecoration(
-                        color: colorItem, //Colors.red[900],
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: width * 0.02, bottom: width * 0.02),
-                    child: Container(
-                      width: width * 0.004,
-                      height: isLast != true ? height * 0.05 : height * 0.03,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[850],
-                      ),
-                    ),
-                  )
-                ],
+              Container(
+                width: width * 0.03,
+                height: height * 0.015,
+                decoration: BoxDecoration(
+                    color: colorItem, //Colors.red[900],
+                    borderRadius: BorderRadius.circular(10)),
               ),
               Column(
                 //mainAxisAlignment: MainAxisAlignment.start,
@@ -55,7 +42,7 @@ class TimeLineItem extends StatelessWidget {
                     child: Text(
                       transaction.description,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: width * 0.05,
                       ),
                     ),
@@ -66,7 +53,7 @@ class TimeLineItem extends StatelessWidget {
                     child: Text(
                       transaction.date,
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: Colors.black,
                         fontSize: width * 0.034,
                       ),
                     ),
@@ -83,9 +70,10 @@ class TimeLineItem extends StatelessWidget {
                   : " ${transaction.value}",
               textAlign: TextAlign.end,
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: width * 0.04,
-                  fontWeight: FontWeight.bold),
+                color: colorItem,
+                fontSize: width * 0.04,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           )
         ],
