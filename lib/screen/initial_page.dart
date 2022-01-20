@@ -1,4 +1,7 @@
+import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_tracker/Helper/transaction_helper.dart';
+import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
 import 'package:money_tracker/components/animated_bottom_nav_bar.dart';
 import 'package:money_tracker/components/card_transaction_item.dart';
 import 'package:money_tracker/constants/colors.dart';
@@ -12,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../constants/custom_log.dart';
+import 'home.dart';
 
 class InitialPage extends StatefulWidget {
   final String userId;
@@ -77,46 +81,76 @@ class _InitialPageState extends State<InitialPage> {
 
     //_allMov();
     //print("\nMes atual: " + DateTime.now().month.toString());
-    return Scaffold(
-      body: GestureDetector(
-        onHorizontalDragEnd: (dis) {
-          customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
-          if (dis.primaryVelocity > 0) {
-            //User swiped from left to right
-            customLog("User swiped from left to right.Previous SI is $selectedBarIndex");
-            if (selectedBarIndex > 0) {
-              setState(() {
-                selectedBarIndex--;
-              });
-            }
-          } else if (dis.primaryVelocity < 0) {
-            //User swiped from right to left
-            customLog("User swiped from right to left.Previous SI is $selectedBarIndex");
+    return ConditionalWillPopScope(
+      shouldAddCallback: true,
+      onWillPop: () async {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        return await Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, a1, a2) {
+              return BlocProvider(
+                create: (context) => UserBloc()..add(FetchAllUser()),
+                child: Home(),
+              );
+            },
+            opaque: true,
+            // transitionDuration: Duration(seconds: 0),
+          ),
 
-            if (selectedBarIndex < 2) {
-              setState(() {
-                selectedBarIndex++;
-              });
+          // MaterialPageRoute(
+          //   builder: (context) => BlocProvider(
+          //     create: (context) => UserBloc()..add(FetchAllUser()),
+          //     child: Home(),
+          //   ),
+          // ),
+          (route) => false,
+        );
+      },
+      child: Scaffold(
+        body: GestureDetector(
+          onHorizontalDragEnd: (dis) {
+            customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
+            if (dis.primaryVelocity > 0) {
+              //User swiped from left to right
+              customLog(
+                  "User swiped from left to right.Previous SI is $selectedBarIndex");
+              if (selectedBarIndex > 0) {
+                setState(() {
+                  selectedBarIndex--;
+                });
+              }
+            } else if (dis.primaryVelocity < 0) {
+              //User swiped from right to left
+              customLog(
+                  "User swiped from right to left.Previous SI is $selectedBarIndex");
+
+              if (selectedBarIndex < 2) {
+                setState(() {
+                  selectedBarIndex++;
+                });
+              }
             }
-          }
-        },
-        child: tabs[selectedBarIndex],
+          },
+          child: tabs[selectedBarIndex],
+        ),
+        // bottomNavigationBar: AnimatedBottomBar(
+        //   barItems: widget.barItems,
+        //   animationDuration: const Duration(milliseconds: 150),
+        //   barStyle: BarStyle(
+        //     fontSize: width * 0.045,
+        //     iconSize: width * 0.07,
+        //   ),
+        //   selectedBarIndex: selectedBarIndex,
+        //   onBarTap: (index) {
+        //     customLog(index);
+        //     setState(() {
+        //       selectedBarIndex = index;
+        //     });
+        //   },
+        // ),
       ),
-      // bottomNavigationBar: AnimatedBottomBar(
-      //   barItems: widget.barItems,
-      //   animationDuration: const Duration(milliseconds: 150),
-      //   barStyle: BarStyle(
-      //     fontSize: width * 0.045,
-      //     iconSize: width * 0.07,
-      //   ),
-      //   selectedBarIndex: selectedBarIndex,
-      //   onBarTap: (index) {
-      //     customLog(index);
-      //     setState(() {
-      //       selectedBarIndex = index;
-      //     });
-      //   },
-      // ),
     );
   }
 }

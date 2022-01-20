@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
 import 'package:money_tracker/components/card_user.dart';
+import 'package:money_tracker/constants/colors.dart';
 import 'package:money_tracker/constants/custom_log.dart';
 import 'package:money_tracker/helper/user_helper.dart';
+import 'package:money_tracker/models/user.dart';
 import 'package:money_tracker/screen/home_page.dart';
 import '../constants/size_config.dart';
 import 'initial_page.dart';
@@ -18,10 +22,12 @@ class _HomeState extends State<Home> {
   UserHelper userHelper = UserHelper();
   List<User> allUsers = [];
   TextEditingController personNameController = TextEditingController();
+  UserBloc userBloc;
 
   @override
   void initState() {
     super.initState();
+    userBloc = BlocProvider.of<UserBloc>(context);
     getUserList();
   }
 
@@ -57,8 +63,10 @@ class _HomeState extends State<Home> {
                   var _user = User(
                     id: DateTime.now().millisecondsSinceEpoch,
                     personName: personNameController.text,
+                    netTotal: 0,
                   );
                   userHelper.saveUser(user: _user);
+                  userBloc.add(FetchAllUser());
                   setState(() {
                     personNameController.text = '';
                   });
@@ -114,15 +122,20 @@ class _HomeState extends State<Home> {
       // backgroundColor: Colors.white,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              height: SizeConfig.blockHeight * 10,
-              padding:
-                  EdgeInsets.symmetric(horizontal: SizeConfig.blockWidth * 4),
-              alignment: Alignment.center,
+              color: Colors.amber,
+              height: height * 0.15,
+              padding: EdgeInsets.only(
+                left: SizeConfig.blockWidth * 4,
+                right: SizeConfig.blockWidth * 4,
+                top: width * 0.18,
+                bottom: width * 0.05,
+              ),
+              alignment: Alignment.centerLeft,
               child: Text(
-                "People",
+                "Money Tracker",
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -130,93 +143,137 @@ class _HomeState extends State<Home> {
                     ),
               ),
             ),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: SizeConfig.blockWidth * 2),
+            Expanded(
               child: Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: SizeConfig.blockWidth * 2),
                 // color: Colors.blue[50],
                 width: width,
-                height: height * 0.47,
-                child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemCount: allUsers.length,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: SizeConfig.blockWidth * 2,
-                    vertical: SizeConfig.blockHeight * 1,
-                  ),
-                  itemBuilder: (context, index) {
-                    User user = allUsers[index];
-                    User tempUser = allUsers[index];
-                    return Dismissible(
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        setState(() {
-                          allUsers.removeAt(index);
-                        });
-                        userHelper.deleteUser(user);
-                        final snackBar = SnackBar(
-                          content: Text(
-                            "User Deleted",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          duration: Duration(seconds: 2),
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15))),
-                          action: SnackBarAction(
-                            label: "Undo",
-                            textColor: Colors.white,
-                            onPressed: () {
-                              setState(() {
-                                allUsers.insert(index, tempUser);
-                              });
-                              userHelper.saveUser(user: tempUser);
-                            },
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        // _scafoldKey.currentState.showSnackBar(snackBar);
-                      },
-                      key: ValueKey(user.id),
-                      background: Container(
-                        padding: EdgeInsets.only(right: 10, top: width * 0.04),
-                        alignment: Alignment.topRight,
-                        // color: Colors.white,
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: Colors.red,
-                          size: width * 0.07,
+                // height: height * 0.47,
+                child: allUsers.isEmpty
+                    ? Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Add people with whom you transacted.",
                         ),
-                      ),
-                      child: UserCard(
-                        user: user,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InitialPage(
-                                userId: allUsers[index].id.toString(),
+                      )
+                    : BlocBuilder(
+                        bloc: userBloc,
+                        builder: (context, state) {
+                          if (state is UserLoading) {
+                            return CircularProgressIndicator();
+                          } else if (state is FetchUserFailed) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Something went wrong",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15))),
                               ),
-                            ),
-                          );
+                            );
+                            // return Container();
+                          } else if (state is FetchUserSuccess) {
+                            allUsers = state.users;
+                            return ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              itemCount: allUsers.length,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: SizeConfig.blockWidth * 2,
+                                vertical: SizeConfig.blockHeight * 3,
+                              ),
+                              itemBuilder: (context, index) {
+                                User user = allUsers[index];
+                                User tempUser = allUsers[index];
+                                return Dismissible(
+                                  direction: DismissDirection.endToStart,
+                                  onDismissed: (direction) {
+                                    setState(() {
+                                      allUsers.removeAt(index);
+                                    });
+                                    userHelper.deleteUser(user);
+                                    final snackBar = SnackBar(
+                                      content: Text(
+                                        "User Deleted",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15))),
+                                      action: SnackBarAction(
+                                        label: "Undo",
+                                        textColor: Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            allUsers.insert(index, tempUser);
+                                          });
+                                          userHelper.saveUser(user: tempUser);
+                                        },
+                                      ),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    // _scafoldKey.currentState.showSnackBar(snackBar);
+                                  },
+                                  key: ValueKey(user.id),
+                                  background: Container(
+                                    padding: EdgeInsets.only(
+                                        right: 10, top: width * 0.04),
+                                    alignment: Alignment.topRight,
+                                    // color: Colors.white,
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                      size: width * 0.07,
+                                    ),
+                                  ),
+                                  child: UserCard(
+                                    user: user,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InitialPage(
+                                            userId:
+                                                allUsers[index].id.toString(),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    lastItem: allUsers[index] == allUsers.last
+                                        ? true
+                                        : false,
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                          return CircularProgressIndicator();
                         },
-                        lastItem:
-                            allUsers[index] == allUsers.last ? true : false,
                       ),
-                    );
-                  },
-                ),
               ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: COLORS.deepBlue,
+        ),
+        backgroundColor: Colors.amber,
         onPressed: () {
           _dialogEnterPersonName();
         },

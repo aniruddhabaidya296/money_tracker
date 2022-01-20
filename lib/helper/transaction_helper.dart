@@ -1,3 +1,4 @@
+import 'package:money_tracker/constants/custom_log.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -107,7 +108,7 @@ class TransactionHelper {
     return listTransaction;
   }
 
-  Future<List> getAllTransactionOfPerson(String userId) async {
+  Future<List<Transaction>> getAllTransactionOfPerson(String userId) async {
     Database dbTransaction = await db;
     List listMap = await dbTransaction.rawQuery(
         "SELECT * FROM ${GlobalConstants.transactionTABLE} WHERE ${GlobalConstants.userId} LIKE '%$userId%'");
@@ -115,11 +116,16 @@ class TransactionHelper {
 
     for (Map m in listMap) {
       listTransaction.add(Transaction.fromMap(m));
+      // customLog("Transaction is $m");
     }
+    listTransaction.map((e) {
+      customLog(e);
+    });
     return listTransaction;
   }
 
-  Future<List> getAllTransactionBytype({String type, String userId}) async {
+  Future<List<Transaction>> getAllTransactionBytype(
+      {String type, String userId}) async {
     Database dbTransaction = await db;
     List listMap = await dbTransaction.rawQuery(
         "SELECT * FROM ${GlobalConstants.transactionTABLE} WHERE ${GlobalConstants.userId}='$userId' AND ${GlobalConstants.typeColumn} ='$type' ");

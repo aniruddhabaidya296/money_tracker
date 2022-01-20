@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:money_tracker/constants/colors.dart';
 import 'package:money_tracker/constants/custom_log.dart';
 import 'package:money_tracker/constants/size_config.dart';
+import 'package:money_tracker/helper/user_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../helper/transaction_helper.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   CalendarController calendarController;
   TransactionHelper transactionHelper = TransactionHelper();
   List<Transaction> transactionList = [];
-  // List<Transaction> ultimaTarefaRemovida = [];
+  UserHelper _userHelper = UserHelper();
 
   var dataAtual = new DateTime.now();
   var formatter = new DateFormat('dd-MM-yyyy');
@@ -44,13 +45,6 @@ class _HomePageState extends State<HomePage> {
     return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
   }
 
-  _addvalue() {
-    String value = _valueController.text;
-    setState(() {
-      netTotal = value;
-    });
-  }
-
   _fontSize(String content) {
     if (content.length > 8) {
       return width * 0.08;
@@ -59,26 +53,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _salvar() {
-    formattedDate = formatter.format(dataAtual);
-    Transaction transaction = Transaction();
-    transaction.value = 20.50;
-    transaction.type = "g";
-    transaction.date = "10-03-2020"; //formattedDate;
-    transaction.description = "CashBack";
-    TransactionHelper transactionHelper = TransactionHelper();
-    transactionHelper.saveTransaction(transaction);
-    transaction.toString();
-  }
-
-  _allMov() {
-    transactionHelper.getAllTransaction().then((list) {
-      setState(() {
-        transactionList = list;
-      });
-      print("All Transactions: $transactionList");
-    });
-  }
+  
 
   _allTransactionMonth(String date) {
     // customLog(transactionList.length);
@@ -133,7 +108,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-
+    // _allTransactions();
     _allTransactionMonth(formattedDate);
     return Scaffold(
       backgroundColor: COLORS.offWhite,

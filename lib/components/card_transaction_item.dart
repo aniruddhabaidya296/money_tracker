@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_tracker/constants/size_config.dart';
 
 import '../helper/transaction_helper.dart';
 import 'custom_dialog.dart';
@@ -11,6 +12,7 @@ class TransactionCard extends StatelessWidget {
       : super(key: key);
 
   _dialogDelete(BuildContext context, double width) {
+    SizeConfig().init(context);
     showDialog(
         context: context,
         builder: (context) {
@@ -23,7 +25,7 @@ class TransactionCard extends StatelessWidget {
             ),
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(width * 0.050),
+              borderRadius: BorderRadius.circular(SizeConfig.blockWidth * 3),
             ),
             content: SingleChildScrollView(
               child: Column(
@@ -39,9 +41,7 @@ class TransactionCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: width * 0.045,
-                        color: transaction.type.toString() == "g"
-                            ? Colors.green[600]
-                            : Colors.red[600],
+                        color: Colors.white,
                       ),
                     ),
                   ),

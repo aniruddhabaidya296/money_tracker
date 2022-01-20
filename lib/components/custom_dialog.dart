@@ -1,3 +1,9 @@
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
+import 'package:money_tracker/constants/colors.dart';
+import 'package:money_tracker/constants/size_config.dart';
+import 'package:money_tracker/helper/user_helper.dart';
 import 'package:money_tracker/screen/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -23,8 +29,21 @@ class _CustomDialogState extends State<CustomDialog> {
   Color _colorTextButtom = Colors.green;
   TextEditingController _controllervalue = TextEditingController();
   TextEditingController _controllerDesc = TextEditingController();
+  List<Transaction> transactionList = [];
+  TransactionHelper transactionHelper = TransactionHelper();
+  UserHelper userHelper = UserHelper();
 
-  TransactionHelper _movHelper = TransactionHelper();
+  updateUser() async {
+    await transactionHelper.getAllTransaction().then((list) {
+      setState(() {
+        transactionList = list;
+      });
+      userHelper.updateUser(
+        int.parse(widget.userId),
+      );
+      // print("All Transactions: $transactionList");
+    });
+  }
 
   @override
   void initState() {
@@ -59,9 +78,9 @@ class _CustomDialogState extends State<CustomDialog> {
         title: Text(
           "Amount",
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        backgroundColor: _colorContainer,
+        backgroundColor: Colors.white,
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -75,43 +94,25 @@ class _CustomDialogState extends State<CustomDialog> {
                   // ),
                   Flexible(
                     child: TextField(
-                        controller: _controllervalue,
-                        maxLength: 7,
-                        style: TextStyle(fontSize: width * 0.05),
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        maxLines: 1,
-                        textAlign: TextAlign.end,
-                        decoration: new InputDecoration(
-                          hintText: "0.00",
-                          hintStyle: TextStyle(color: Colors.white54),
-                          contentPadding: EdgeInsets.only(
-                              left: width * 0.04,
-                              top: width * 0.041,
-                              bottom: width * 0.041,
-                              right: width * 0.04), //15),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(width * 0.04),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                              width: 2.0,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(width * 0.04),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                              width: 2.0,
-                            ),
-                          ),
-                        )),
+                      controller: _controllervalue,
+                      maxLength: 7,
+                      style: TextStyle(fontSize: width * 0.05),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      maxLines: 1,
+                      // textAlign: TextAlign.end,
+                      decoration: inputDecoration(text: "Enter Amount"),
+                    ),
                   )
                 ],
               ),
               Row(
                 children: <Widget>[
                   Radio(
-                    activeColor: Colors.green[900],
+                    activeColor: COLORS.deepBlue,
                     value: 1,
                     groupValue: _groupValueRadio,
                     onChanged: (value) {
@@ -132,7 +133,7 @@ class _CustomDialogState extends State<CustomDialog> {
               Row(
                 children: <Widget>[
                   Radio(
-                    activeColor: Colors.red[900],
+                    activeColor: COLORS.deepBlue,
                     value: 2,
                     groupValue: _groupValueRadio,
                     onChanged: (value) {
@@ -151,38 +152,14 @@ class _CustomDialogState extends State<CustomDialog> {
                 ],
               ),
               TextField(
-                  controller: _controllerDesc,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.text,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Note",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
+                controller: _controllerDesc,
+                maxLength: 20,
+                style: TextStyle(fontSize: width * 0.05),
+                keyboardType: TextInputType.text,
+                maxLines: 1,
+                textAlign: TextAlign.start,
+                decoration: inputDecoration(text: "Note"),
+              ),
               Padding(
                 padding: EdgeInsets.only(top: width * 0.09),
                 child: Row(
@@ -194,7 +171,7 @@ class _CustomDialogState extends State<CustomDialog> {
                       },
                       child: Text(
                         "Cancel",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                     GestureDetector(
@@ -220,8 +197,9 @@ class _CustomDialogState extends State<CustomDialog> {
                               transaction.id = widget.transaction.id;
                             }
                             edit == false
-                                ? _movHelper.saveTransaction(transaction)
-                                : _movHelper.updateTransaction(transaction);
+                                ? transactionHelper.saveTransaction(transaction)
+                                : transactionHelper
+                                    .updateTransaction(transaction);
                           }
                           if (_groupValueRadio == 2) {
                             transaction.value = double.parse("-" + value);
@@ -230,9 +208,11 @@ class _CustomDialogState extends State<CustomDialog> {
                               transaction.id = widget.transaction.id;
                             }
                             edit == false
-                                ? _movHelper.saveTransaction(transaction)
-                                : _movHelper.updateTransaction(transaction);
+                                ? transactionHelper.saveTransaction(transaction)
+                                : transactionHelper
+                                    .updateTransaction(transaction);
                           }
+                          updateUser();
                           Navigator.pop(context);
                           //initState();
                         }
@@ -245,13 +225,13 @@ class _CustomDialogState extends State<CustomDialog> {
                             right: width * 0.03),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
+                          color: COLORS.deepBlue,
                         ),
                         child: Center(
                           child: Text(
                             edit == false ? "Confirm" : "Edit",
                             style: TextStyle(
-                                color: _colorTextButtom,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: width * 0.05),
                           ),
@@ -264,5 +244,37 @@ class _CustomDialogState extends State<CustomDialog> {
             ],
           ),
         ));
+  }
+
+  InputDecoration inputDecoration({String text}) {
+    return InputDecoration(
+      //hintText: "descrição",
+      hintText: text,
+      hintStyle: TextStyle(
+        color: COLORS.greyLight,
+        fontSize: SizeConfig.blockWidth * 4.2,
+      ),
+      //hintStyle: TextStyle(color: Colors.grey[400]),
+      contentPadding: EdgeInsets.only(
+          left: SizeConfig.blockWidth * 2,
+          top: SizeConfig.blockWidth * 1,
+          bottom: SizeConfig.blockWidth * 1,
+          right: SizeConfig.blockWidth * 2),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(SizeConfig.blockWidth * 2),
+        borderSide: BorderSide(
+          color: COLORS.deepBlue,
+          width: 2.0,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(SizeConfig.blockWidth * 2),
+        borderSide: BorderSide(
+          color: COLORS.deepBlue,
+          width: 2.0,
+        ),
+      ),
+    );
   }
 }

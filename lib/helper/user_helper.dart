@@ -1,4 +1,5 @@
 import 'package:money_tracker/constants/custom_log.dart';
+import 'package:money_tracker/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -31,7 +32,8 @@ class UserHelper {
       await db.execute(
         "CREATE TABLE ${GlobalConstants.userTABLE}(" +
             "${GlobalConstants.userId} INTEGER PRIMARY KEY, " +
-            "${GlobalConstants.personName} TEXT)",
+            "${GlobalConstants.personName} TEXT, " +
+            "${GlobalConstants.netTotal} TEXT);",
       );
     });
   }
@@ -49,6 +51,7 @@ class UserHelper {
         columns: [
           GlobalConstants.userId,
           GlobalConstants.personName,
+          GlobalConstants.netTotal,
         ],
         where: "${GlobalConstants.userId} =?",
         whereArgs: [id]);
@@ -66,9 +69,9 @@ class UserHelper {
         where: "${GlobalConstants.userId} =?", whereArgs: [user.id]);
   }
 
-  Future<int> updateTransaction(User user) async {
+  Future<int> updateUser(int userId) async {
     print("User update");
-    print(user.toString());
+    User user = await getUser(userId);
     Database dbUser = await db;
     return await dbUser.update(GlobalConstants.userTABLE, user.toMap(),
         where: "${GlobalConstants.userId} =?", whereArgs: [user.id]);
@@ -119,38 +122,5 @@ class UserHelper {
   Future close() async {
     Database dbTransaction = await db;
     dbTransaction.close();
-  }
-}
-
-class User {
-  int id;
-  String personName;
-
-  User({int id, String personName}) {
-    this.id = id;
-    this.personName = personName;
-  }
-
-  print() {
-    customLog("id: $id, personName: $personName");
-  }
-
-  User.fromMap(Map map) {
-    id = map[GlobalConstants.userId];
-    personName = map[GlobalConstants.personName];
-  }
-
-  Map toMap() {
-    Map<String, dynamic> map = {
-      GlobalConstants.personName: personName,
-    };
-    if (id != null) {
-      map[GlobalConstants.userId] = id;
-    }
-    return map;
-  }
-
-  String toString() {
-    return "User(id: $id, personName: $personName )";
   }
 }

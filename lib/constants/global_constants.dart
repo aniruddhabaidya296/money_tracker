@@ -2,6 +2,7 @@ class GlobalConstants {
   static String userTABLE = "userTABLE";
   static String userId = "userId";
   static String personName = "personName";
+  static String netTotal = "netTotal";
   static String transactionTABLE = "transactionTABLE";
   static String idColumn = "idColumn";
   static String dateColumn = "dateColumn";
