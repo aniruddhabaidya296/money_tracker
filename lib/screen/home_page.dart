@@ -13,6 +13,7 @@ import 'package:money_tracker/helper/user_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../helper/transaction_helper.dart';
+import 'helpers/gt_box.dart';
 
 class HomePage extends StatefulWidget {
   final String userId;
@@ -40,6 +41,8 @@ class _HomePageState extends State<HomePage> {
   var formatter = new DateFormat('dd-MM-yyyy');
   var formatterCalendar = new DateFormat('MM-yyyy');
   String formattedDate;
+  double totalGiven;
+  double totalTaken;
 
   String format(double n) {
     return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
@@ -52,8 +55,6 @@ class _HomePageState extends State<HomePage> {
       return width * 0.1;
     }
   }
-
-  
 
   _allTransactionMonth(String date) {
     // customLog(transactionList.length);
@@ -116,92 +117,68 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         primary: false,
         physics: NeverScrollableScrollPhysics(),
-        //physics: ClampingScrollPhysics(),
-        //height: height,
-        //width: width,
-        child: Stack(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: SizeConfig.blockHeight * 6),
-              width: double.infinity,
-              height: height * 0.15, //300,
-              color: Colors.amber,
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                  width: SizeConfig.screenWidth * 0.85,
-                  margin: EdgeInsets.only(
-                    top: SizeConfig.blockHeight * 6,
-                  ),
-                  child: Container(
-                    // height: height * 0.13, //150,
-                    padding: EdgeInsets.only(
-                      top: SizeConfig.blockHeight * 2,
-                      bottom: SizeConfig.blockHeight * 4,
-                    ),
-                    margin: EdgeInsets.symmetric(
-                      vertical: SizeConfig.blockHeight * 2,
-                    ),
-                    width: width * 0.1, // 70,
-                    decoration: BoxDecoration(
-                      color: COLORS.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey[400],
-                            blurRadius: 5,
-                            offset: Offset(2, 2))
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: width * 0.05,
-                            top: width * 0.04,
-                            bottom: width * 0.01,
-                          ),
-                          child: Text(
-                            netTotal.startsWith("-")
-                                ? "You owe"
-                                : "You are owed",
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: SizeConfig.blockWidth * 3,
-                            ),
+              // width: SizeConfig.screenWidth,
+              padding: EdgeInsets.only(
+                top: SizeConfig.blockHeight * 8,
+                // left: SizeConfig.blockWidth * 4,
+              ),
+              // color: Colors.amber,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.blockWidth * 4,
+                ),
+                width: SizeConfig.screenWidth, // 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Flexible(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          top: SizeConfig.blockHeight * 1,
+                        ),
+                        child: Text(
+                          "Current status: ",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: SizeConfig.blockWidth * 4.2,
                           ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            RichText(
+                      ),
+                    ),
+                    // Expanded(
+                    //   child:
+                    Container(
+                      child: Row(
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            // color: Colors.red,
+                            child: RichText(
                               overflow: TextOverflow.ellipsis,
                               text: TextSpan(
                                 children: [
                                   WidgetSpan(
                                     child: Transform.translate(
-                                      offset: const Offset(2, -4),
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.only(left: width * 0.05),
-                                        child: Container(
-                                          // width: width * 0.6,
-                                          child: Text(
-                                            "\u20b9",
-                                            style: TextStyle(
-                                              color: netTotal.startsWith("-")
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                                  SizeConfig.blockWidth * 4,
-                                              //width * 0.1 //_saldoTamanho(saldoAtual)
-                                            ),
+                                      offset: const Offset(2, -7),
+                                      child: Container(
+                                        // width: width * 0.6,
+                                        margin: EdgeInsets.only(right: 2),
+                                        child: Text(
+                                          "\u20b9",
+                                          style: TextStyle(
+                                            color: netTotal.startsWith("-")
+                                                ? Colors.red
+                                                : Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: SizeConfig.blockWidth * 4,
+                                            //width * 0.1 //_saldoTamanho(saldoAtual)
                                           ),
                                         ),
                                       ),
@@ -210,180 +187,165 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            Expanded(
-                              child: Text(
-                                netTotal.replaceFirst('-', ''),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: netTotal.startsWith("-")
-                                      ? Colors.red
-                                      : Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: _fontSize(netTotal),
-                                  //width * 0.1 //_saldoTamanho(saldoAtual)
-                                ),
+                          ),
+                          // Expanded(
+                          // child:
+                          Container(
+                            // color: Colors.blue,
+                            child: Text(
+                              netTotal.replaceFirst('-', ''),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: netTotal.startsWith("-")
+                                    ? Colors.red
+                                    : Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: _fontSize(netTotal),
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * 0.008,
-                        )
-                      ],
+                          ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.blockWidth * 2,
+                vertical: SizeConfig.blockHeight * 2,
+              ),
+              child: Row(
+                children: [
+                  gtBox(boxType: 'g', transactionList: transactionList),
+                  gtBox(boxType: 't', transactionList: transactionList),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.blockWidth * 4,
+                vertical: SizeConfig.blockHeight * 2,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Last Transactions",
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: SizeConfig.blockWidth * 4.2,
                     ),
                   ),
-                ),
-                TableCalendar(
-                  calendarController: calendarController,
-                  locale: "en_US",
-                  headerStyle: HeaderStyle(
-                    formatButtonShowsNext: false,
-                    formatButtonVisible: false,
-                    centerHeaderTitle: true,
-                  ),
-                  calendarStyle: CalendarStyle(outsideDaysVisible: false),
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(color: Colors.transparent),
-                    weekendStyle: TextStyle(color: Colors.transparent),
-                  ),
-                  rowHeight: 0,
-                  initialCalendarFormat: CalendarFormat.month,
-                  onVisibleDaysChanged:
-                      (dateFirst, dateLast, CalendarFormat cf) {
-                    print(dateFirst);
-
-                    formattedDate = formatterCalendar.format(dateFirst);
-                    _allTransactionMonth(formattedDate);
-
-                    print("DATE FORMATTED CALENDAR $formattedDate");
-                  },
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.only(left: width * 0.04, right: width * 0.04),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Transactions",
-                        style: TextStyle(
-                            color: Colors.grey[600], fontSize: width * 0.04),
+                  Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        _dialogAddTransaction();
+                      },
+                      child: Container(
+                        width: width * 0.12,
+                        height: width * 0.12, //65,
+                        decoration: BoxDecoration(
+                          color: COLORS.deepBlue, //Colors.indigo[400],
+                          borderRadius: BorderRadius.circular(
+                            SizeConfig.blockWidth * 3,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 7,
+                              offset: Offset(1, 1),
+                            )
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          size: width * 0.07,
+                          color: Colors.white,
+                        ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(right: width * 0.04),
-                        child: GestureDetector(
-                          onTap: () {
-                            _dialogAddTransaction();
-                            /* Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddReceita()));
-                                 */
-                          },
-                          child: Container(
-                            width: width * 0.12,
-                            height: width * 0.12, //65,
-                            decoration: BoxDecoration(
-                                color: COLORS.deepBlue, //Colors.indigo[400],
-                                borderRadius: BorderRadius.circular(
-                                  SizeConfig.blockWidth * 3,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 7,
-                                    offset: Offset(2, 2),
-                                  )
-                                ]),
-                            child: Icon(
-                              Icons.add,
-                              size: width * 0.07,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              child: Container(
+                width: width,
+                // color: Colors.yellow,
+                height: height * 0.47,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeConfig.blockWidth * 4,
+                  ),
+                  itemCount: transactionList.length,
+                  itemBuilder: (context, index) {
+                    Transaction transaction = transactionList[index];
+                    Transaction ultMov = transactionList[index];
+                    return Dismissible(
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        setState(() {
+                          transactionList.removeAt(index);
+                        });
+                        transactionHelper.deleteTransaction(transaction);
+                        final snackBar = SnackBar(
+                          content: Text(
+                            "Transaction Deleted",
+                            style: TextStyle(
                               color: Colors.white,
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: width * 0.04, right: width * 0.04, top: 0),
-                  child: SizedBox(
-                    width: width,
-                    height: height * 0.47,
-                    child: ListView.builder(
-                      itemCount: transactionList.length,
-                      itemBuilder: (context, index) {
-                        Transaction transaction = transactionList[index];
-                        Transaction ultMov = transactionList[index];
-                        return Dismissible(
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            setState(() {
-                              transactionList.removeAt(index);
-                            });
-                            transactionHelper.deleteTransaction(transaction);
-                            final snackBar = SnackBar(
-                              content: Text(
-                                "Transaction Deleted",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(15),
-                                      topRight: Radius.circular(15))),
-                              action: SnackBarAction(
-                                label: "Undo",
-                                textColor: Colors.white,
-                                onPressed: () {
-                                  setState(() {
-                                    transactionList.insert(index, ultMov);
-                                  });
-                                  transactionHelper.saveTransaction(ultMov);
-                                },
-                              ),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                            // _scafoldKey.currentState.showSnackBar(snackBar);
-                          },
-                          key: ValueKey(transaction.id),
-                          background: Container(
-                            padding:
-                                EdgeInsets.only(right: 10, top: width * 0.04),
-                            alignment: Alignment.topRight,
-                            // color: Colors.red,
-                            child: Icon(
-                              Icons.delete_outline,
-                              color: Colors.red,
-                              size: width * 0.07,
-                            ),
-                          ),
-                          child: TransactionCard(
-                            transaction: transaction,
-                            lastItem:
-                                transactionList[index] == transactionList.last
-                                    ? true
-                                    : false,
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15))),
+                          action: SnackBarAction(
+                            label: "Undo",
+                            textColor: Colors.white,
+                            onPressed: () {
+                              setState(() {
+                                transactionList.insert(index, ultMov);
+                              });
+                              transactionHelper.saveTransaction(ultMov);
+                            },
                           ),
                         );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        // _scafoldKey.currentState.showSnackBar(snackBar);
                       },
-                    ),
-                  ),
+                      key: ValueKey(transaction.id),
+                      background: Container(
+                        padding: EdgeInsets.only(right: 10, top: width * 0.04),
+                        alignment: Alignment.topRight,
+                        // color: Colors.red,
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                          size: width * 0.07,
+                        ),
+                      ),
+                      child: TransactionCard(
+                        transaction: transaction,
+                        lastItem: transactionList[index] == transactionList.last
+                            ? true
+                            : false,
+                      ),
+                    );
+                  },
                 ),
-                // Padding(
-                //   padding: EdgeInsets.only(top: 20),
-                //   child: Text("EEEEEEEEE"),
-                // )
-              ],
+              ),
             ),
           ],
         ),
+        //   ],
+        // ),
       ),
     );
   }

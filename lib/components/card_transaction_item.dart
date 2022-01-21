@@ -156,7 +156,7 @@ class TransactionCard extends StatelessWidget {
             _dialogEdit(context, width, transaction);
           },
           onLongPress: () {
-            _dialogDelete(context, width);
+            // _dialogDelete(context, width);
           },
           child: Container(
             // color: Colors.blue,
@@ -170,25 +170,26 @@ class TransactionCard extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              blurRadius: 10,
-                              offset: Offset(2, 3),
-                            )
-                          ]),
+                        // color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          // BoxShadow(
+                          //   color: Colors.grey[300],
+                          //   blurRadius: 10,
+                          //   offset: Offset(2, 3),
+                          // )
+                        ],
+                      ),
                       child: Padding(
                         padding: EdgeInsets.all(width * 0.03),
                         child: transaction.type == "g"
                             ? Icon(
-                                Icons.arrow_upward,
+                                Icons.call_made_rounded,
                                 color: Colors.green,
                                 size: width * 0.06,
                               )
                             : Icon(
-                                Icons.arrow_downward,
+                                Icons.call_received_rounded,
                                 color: Colors.red,
                                 size: width * 0.06,
                               ),
