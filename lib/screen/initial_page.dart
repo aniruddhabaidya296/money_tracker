@@ -84,8 +84,9 @@ class _InitialPageState extends State<InitialPage> {
     return ConditionalWillPopScope(
       shouldAddCallback: true,
       onWillPop: () async {
-        Navigator.pop(context);
-        Navigator.pop(context);
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        customLog("Handling back swipe..");
         return await Navigator.pushAndRemoveUntil(
           context,
           PageRouteBuilder(
@@ -96,15 +97,7 @@ class _InitialPageState extends State<InitialPage> {
               );
             },
             opaque: true,
-            // transitionDuration: Duration(seconds: 0),
           ),
-
-          // MaterialPageRoute(
-          //   builder: (context) => BlocProvider(
-          //     create: (context) => UserBloc()..add(FetchAllUser()),
-          //     child: Home(),
-          //   ),
-          // ),
           (route) => false,
         );
       },
@@ -135,22 +128,13 @@ class _InitialPageState extends State<InitialPage> {
           },
           child: tabs[selectedBarIndex],
         ),
-        // bottomNavigationBar: AnimatedBottomBar(
-        //   barItems: widget.barItems,
-        //   animationDuration: const Duration(milliseconds: 150),
-        //   barStyle: BarStyle(
-        //     fontSize: width * 0.045,
-        //     iconSize: width * 0.07,
-        //   ),
-        //   selectedBarIndex: selectedBarIndex,
-        //   onBarTap: (index) {
-        //     customLog(index);
-        //     setState(() {
-        //       selectedBarIndex = index;
-        //     });
-        //   },
-        // ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    
   }
 }

@@ -17,7 +17,11 @@ class TimeLineItem extends StatelessWidget {
 
     return Container(
       width: width,
-      margin: EdgeInsets.symmetric(horizontal: SizeConfig.blockWidth * 2),
+      margin: EdgeInsets.only(
+        left: SizeConfig.blockWidth * 2,
+        right: SizeConfig.blockWidth * 2,
+        bottom: SizeConfig.blockHeight * 2,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

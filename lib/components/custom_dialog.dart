@@ -34,15 +34,23 @@ class _CustomDialogState extends State<CustomDialog> {
   UserHelper userHelper = UserHelper();
 
   updateUser() async {
-    await transactionHelper.getAllTransaction().then((list) {
-      setState(() {
-        transactionList = list;
-      });
-      userHelper.updateUser(
-        int.parse(widget.userId),
-      );
-      // print("All Transactions: $transactionList");
-    });
+    // await transactionHelper.getAllTransaction().then((list) {
+    //   setState(() {
+    //     transactionList = list;
+    //   });
+    //   userHelper.updateUser(
+    //     int.parse(widget.userId),
+    //   );
+    //   // print("All Transactions: $transactionList");
+    // });
+    // setState(() async {
+    transactionList = await transactionHelper.getAllTransactionOfPerson(widget.userId);
+    // });
+    double netTotal = 0;
+    for (var i in transactionList) {
+      netTotal = netTotal + i.value;
+    }
+    userHelper.updateUser(int.parse(widget.userId), netTotal);
   }
 
   @override

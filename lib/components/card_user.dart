@@ -57,55 +57,49 @@ class _UserCardState extends State<UserCard> {
             height: height * 0.07,
             margin: EdgeInsets.only(bottom: SizeConfig.blockHeight * 2),
             child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[300],
-                      blurRadius: 10,
-                      offset: Offset(2, 3),
-                    )
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-                  child: Container(
-                    width: SizeConfig.blockWidth * 80,
-                    child: ListTile(
-                      title: Text(
-                        widget.user.personName,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          // color: user.type == "g"
-                          //     ? Colors.green[700]
-                          //     : Colors.red[700],
-                          fontWeight: FontWeight.bold,
-                          fontSize: width * 0.044,
-                        ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[300],
+                    blurRadius: 10,
+                    offset: Offset(2, 3),
+                  )
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.03),
+                child: Container(
+                  width: SizeConfig.blockWidth * 80,
+                  child: ListTile(
+                    title: Text(
+                      widget.user.personName,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        // color: user.type == "g"
+                        //     ? Colors.green[700]
+                        //     : Colors.red[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: width * 0.044,
                       ),
-                      trailing: userNetTotal == null
-                          ? null
-                          : Text(
-                              userNetTotal.toString(),
-                            ),
                     ),
+                    trailing: widget.user.netTotal == null
+                        ? null
+                        : Text(
+                            widget.user.netTotal.toString(),
+                            style: TextStyle(
+                              color: widget.user.netTotal < 0
+                                  ? Colors.red
+                                  : Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
-                )),
-
-            // Text(
-            //   user.type == "g"
-            //       ? "+ ${user.value}"
-            //       : " ${user.value}",
-            //   style: TextStyle(
-            //     color: user.type == "g"
-            //         ? Colors.green[700]
-            //         : Colors.red[700],
-            //     fontWeight: FontWeight.bold,
-            //     fontSize: width * 0.044,
-            //   ),
-            // ),
+                ),
+              ),
+            ),
           ),
         ),
         widget.lastItem == true

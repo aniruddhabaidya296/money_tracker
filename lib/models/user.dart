@@ -13,7 +13,7 @@ class User {
   }
 
   print() {
-    customLog("id: $id, personName: $personName");
+    customLog("id: $id, personName: $personName, netTotal: $netTotal");
   }
 
   User.fromMap(Map map) {

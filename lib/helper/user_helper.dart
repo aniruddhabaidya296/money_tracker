@@ -69,23 +69,29 @@ class UserHelper {
         where: "${GlobalConstants.userId} =?", whereArgs: [user.id]);
   }
 
-  Future<int> updateUser(int userId) async {
+  void updateUser(int userId, double netTotal) async {
     print("User update");
     User user = await getUser(userId);
     Database dbUser = await db;
-    return await dbUser.update(GlobalConstants.userTABLE, user.toMap(),
-        where: "${GlobalConstants.userId} =?", whereArgs: [user.id]);
+    // return await dbUser.update(GlobalConstants.userTABLE, user.toMap(),
+    //     where: "${GlobalConstants.userId} =?", whereArgs: [user.id]);
+    await dbUser.execute(
+        'UPDATE ${GlobalConstants.userTABLE} SET ${GlobalConstants.netTotal} = ?  WHERE ${GlobalConstants.userId} = $userId;',
+        [netTotal]);
   }
 
   Future<List<User>> getAllUsers() async {
+    // customLog("Getting all users..");
     Database dbUser = await db;
     List listMap =
         await dbUser.rawQuery("SELECT * FROM ${GlobalConstants.userTABLE}");
+
     List<User> users = [];
 
     for (Map m in listMap) {
       users.add(User.fromMap(m));
     }
+    // customLog(users);
     return users;
   }
 

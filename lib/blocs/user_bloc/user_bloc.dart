@@ -17,9 +17,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> mapFetchAllUserToState(
       FetchAllUser event, Emitter<UserState> emit) async {
     try {
+      customLog("Fetching all users...");
       UserHelper userHelper = UserHelper();
       List<User> users = [];
       users = await userHelper.getAllUsers();
+      customLog(users);
+      // users.map((e) {
+      //   customLog("user is $e");
+      // });
       emit(FetchUserSuccess(users: users));
     } catch (e) {
       customLog(e.toString());
