@@ -62,12 +62,7 @@ class _InitialPageState extends State<InitialPage> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        //systemNavigationBarColor: Colors.lightBlue[700], // navigation bar color
-        //statusBarColor: Colors.lightBlue[700],
         systemNavigationBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.white,
         statusBarIconBrightness: Brightness.light // status bar color
@@ -88,34 +83,53 @@ class _InitialPageState extends State<InitialPage> {
       )
     ];
 
-    //_allMov();
-    //print("\nMes atual: " + DateTime.now().month.toString());
-    return Scaffold(
-      body: GestureDetector(
-        onHorizontalDragEnd: (dis) {
-          customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
-          if (dis.primaryVelocity > 0) {
-            //User swiped from left to right
-            customLog(
-                "User swiped from left to right.Previous SI is $selectedBarIndex");
-            if (selectedBarIndex > 0) {
-              setState(() {
-                selectedBarIndex--;
-              });
-            }
-          } else if (dis.primaryVelocity < 0) {
-            //User swiped from right to left
-            customLog(
-                "User swiped from right to left.Previous SI is $selectedBarIndex");
+    return ConditionalWillPopScope(
+      shouldAddCallback: false,
+      onWillPop: () async {
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        customLog("Handling back swipe..");
+        return await Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, a1, a2) {
+              return BlocProvider(
+                create: (context) => UserBloc()..add(FetchAllUser()),
+                child: Home(),
+              );
+            },
+            opaque: true,
+          ),
+          (route) => false,
+        );
+      },
+      child: Scaffold(
+        body: GestureDetector(
+          onHorizontalDragEnd: (dis) {
+            customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
+            if (dis.primaryVelocity > 0) {
+              //User swiped from left to right
+              customLog(
+                  "User swiped from left to right.Previous SI is $selectedBarIndex");
+              if (selectedBarIndex > 0) {
+                setState(() {
+                  selectedBarIndex--;
+                });
+              }
+            } else if (dis.primaryVelocity < 0) {
+              //User swiped from right to left
+              customLog(
+                  "User swiped from right to left.Previous SI is $selectedBarIndex");
 
-            if (selectedBarIndex < 2) {
-              setState(() {
-                selectedBarIndex++;
-              });
+              if (selectedBarIndex < 2) {
+                setState(() {
+                  selectedBarIndex++;
+                });
+              }
             }
-          }
-        },
-        child: tabs[selectedBarIndex],
+          },
+          child: tabs[selectedBarIndex],
+        ),
       ),
     );
   }
