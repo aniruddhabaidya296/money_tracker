@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   CalendarController calendarController;
   TransactionHelper transactionHelper = TransactionHelper();
   List<Transaction> transactionList = [];
-  UserHelper _userHelper = UserHelper();
+  UserHelper userHelper = UserHelper();
 
   var dataAtual = new DateTime.now();
   var formatter = new DateFormat('dd-MM-yyyy');
@@ -57,6 +57,16 @@ class _HomePageState extends State<HomePage> {
     } else {
       return width * 0.1;
     }
+  }
+
+  updateUser() async {
+    transactionList =
+        await transactionHelper.getAllTransactionOfPerson(widget.userId);
+    double netTotal = 0;
+    for (var i in transactionList) {
+      netTotal = netTotal + i.value;
+    }
+    userHelper.updateUser(int.parse(widget.userId), netTotal);
   }
 
   _getAllTransaction() {
@@ -325,6 +335,7 @@ class _HomePageState extends State<HomePage> {
                           transactionList.removeAt(index);
                         });
                         transactionHelper.deleteTransaction(transaction);
+                        updateUser();
                         final snackBar = SnackBar(
                           content: Text(
                             "Transaction Deleted",
@@ -346,6 +357,7 @@ class _HomePageState extends State<HomePage> {
                                 transactionList.insert(index, ultMov);
                               });
                               transactionHelper.saveTransaction(ultMov);
+                              updateUser();
                             },
                           ),
                         );

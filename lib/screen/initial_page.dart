@@ -84,7 +84,7 @@ class _InitialPageState extends State<InitialPage> {
     ];
 
     return ConditionalWillPopScope(
-      shouldAddCallback: false,
+      shouldAddCallback: true,
       onWillPop: () async {
         // Navigator.pop(context);
         // Navigator.pop(context);
