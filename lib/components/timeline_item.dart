@@ -30,12 +30,18 @@ class TimeLineItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                width: width * 0.03,
-                height: height * 0.015,
-                decoration: BoxDecoration(
-                    color: colorItem, //Colors.red[900],
-                    borderRadius: BorderRadius.circular(10)),
+              // Container(
+              //   width: width * 0.03,
+              //   height: height * 0.015,
+              //   decoration: BoxDecoration(
+              //       color: colorItem, //Colors.red[900],
+              //       borderRadius: BorderRadius.circular(10)),
+              // ),
+              Icon(
+                transaction.type == "g"
+                    ? Icons.call_made_rounded
+                    : Icons.call_received_rounded,
+                color: colorItem,
               ),
               Column(
                 //mainAxisAlignment: MainAxisAlignment.start,

@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:money_tracker/blocs/bloc.dart';
 import 'package:money_tracker/components/animated_bottom_nav_bar.dart';
 import 'package:money_tracker/components/card_transaction_item.dart';
 import 'package:money_tracker/components/custom_dialog.dart';
@@ -14,6 +16,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../helper/transaction_helper.dart';
 import 'helpers/gt_box.dart';
+import 'home.dart';
 
 class HomePage extends StatefulWidget {
   final String userId;
@@ -56,11 +59,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _allTransactionMonth(String date) {
+  _getAllTransaction() {
     // customLog(transactionList.length);
-    transactionHelper
-        .getAllTransactionPerMonth(date: date, userId: widget.userId)
-        .then((list) {
+    transactionHelper.getAllTransactionOfPerson(widget.userId).then((list) {
       if (list.isNotEmpty) {
         setState(() {
           transactionList = list;
@@ -86,23 +87,24 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     calendarController = CalendarController();
-    if (DateTime.now().month != false) {}
     //_salvar();
     formattedDate = formatterCalendar.format(dataAtual);
     print(formattedDate);
-    _allTransactionMonth(formattedDate);
+    _getAllTransaction();
 
     //_allMov();
   }
 
   _dialogAddTransaction() {
     showDialog(
-        context: context,
-        builder: (context) {
-          return CustomDialog(
-            userId: widget.userId,
-          );
-        });
+      barrierColor: COLORS.blackMedium.withOpacity(0.8),
+      context: context,
+      builder: (context) {
+        return CustomDialog(
+          userId: widget.userId,
+        );
+      },
+    );
   }
 
   @override
@@ -110,7 +112,7 @@ class _HomePageState extends State<HomePage> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     // _allTransactions();
-    _allTransactionMonth(formattedDate);
+    _getAllTransaction();
     return Scaffold(
       backgroundColor: COLORS.offWhite,
       key: _scafoldKey,
@@ -142,12 +144,32 @@ class _HomePageState extends State<HomePage> {
                         margin: EdgeInsets.only(
                           top: SizeConfig.blockHeight * 1,
                         ),
-                        child: Text(
-                          "Current status: ",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: SizeConfig.blockWidth * 4.2,
-                          ),
+                        // child: Text(
+                        //   "Current status: ",
+                        //   style: TextStyle(
+                        //     color: Colors.grey[600],
+                        //     fontSize: SizeConfig.blockWidth * 4.2,
+                        //   ),
+                        // ),
+                        child: GestureDetector(
+                          onTap: () async {
+                            // Navigator.pop(context);
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, a1, a2) {
+                                  return BlocProvider(
+                                    create: (context) =>
+                                        UserBloc()..add(FetchAllUser()),
+                                    child: Home(),
+                                  );
+                                },
+                                opaque: true,
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: Icon(Icons.arrow_back_ios),
                         ),
                       ),
                     ),
@@ -220,8 +242,18 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 children: [
-                  gtBox(boxType: 'g', transactionList: transactionList),
-                  gtBox(boxType: 't', transactionList: transactionList),
+                  gtBox(
+                    boxType: 't',
+                    transactionList: transactionList,
+                    context: context,
+                    userId: widget.userId,
+                  ),
+                  gtBox(
+                    boxType: 'g',
+                    transactionList: transactionList,
+                    context: context,
+                    userId: widget.userId,
+                  ),
                 ],
               ),
             ),

@@ -18,8 +18,9 @@ import '../constants/custom_log.dart';
 import 'home.dart';
 
 class InitialPage extends StatefulWidget {
+  final int index;
   final String userId;
-  InitialPage({Key key, this.userId}) : super(key: key);
+  InitialPage({Key key, this.userId, this.index}) : super(key: key);
   final List<BarItem> barItems = [
     BarItem(
       text: "Taken",
@@ -49,7 +50,15 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
-  int selectedBarIndex = 1;
+  int selectedBarIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      selectedBarIndex = widget.index == null ? 1 : widget.index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,53 +90,32 @@ class _InitialPageState extends State<InitialPage> {
 
     //_allMov();
     //print("\nMes atual: " + DateTime.now().month.toString());
-    return ConditionalWillPopScope(
-      shouldAddCallback: true,
-      onWillPop: () async {
-        // Navigator.pop(context);
-        // Navigator.pop(context);
-        customLog("Handling back swipe..");
-        return await Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, a1, a2) {
-              return BlocProvider(
-                create: (context) => UserBloc()..add(FetchAllUser()),
-                child: Home(),
-              );
-            },
-            opaque: true,
-          ),
-          (route) => false,
-        );
-      },
-      child: Scaffold(
-        body: GestureDetector(
-          onHorizontalDragEnd: (dis) {
-            customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
-            if (dis.primaryVelocity > 0) {
-              //User swiped from left to right
-              customLog(
-                  "User swiped from left to right.Previous SI is $selectedBarIndex");
-              if (selectedBarIndex > 0) {
-                setState(() {
-                  selectedBarIndex--;
-                });
-              }
-            } else if (dis.primaryVelocity < 0) {
-              //User swiped from right to left
-              customLog(
-                  "User swiped from right to left.Previous SI is $selectedBarIndex");
-
-              if (selectedBarIndex < 2) {
-                setState(() {
-                  selectedBarIndex++;
-                });
-              }
+    return Scaffold(
+      body: GestureDetector(
+        onHorizontalDragEnd: (dis) {
+          customLog("dis.primaryVelocity is ${dis.primaryVelocity}");
+          if (dis.primaryVelocity > 0) {
+            //User swiped from left to right
+            customLog(
+                "User swiped from left to right.Previous SI is $selectedBarIndex");
+            if (selectedBarIndex > 0) {
+              setState(() {
+                selectedBarIndex--;
+              });
             }
-          },
-          child: tabs[selectedBarIndex],
-        ),
+          } else if (dis.primaryVelocity < 0) {
+            //User swiped from right to left
+            customLog(
+                "User swiped from right to left.Previous SI is $selectedBarIndex");
+
+            if (selectedBarIndex < 2) {
+              setState(() {
+                selectedBarIndex++;
+              });
+            }
+          }
+        },
+        child: tabs[selectedBarIndex],
       ),
     );
   }
@@ -135,6 +123,5 @@ class _InitialPageState extends State<InitialPage> {
   @override
   void dispose() {
     super.dispose();
-    
   }
 }

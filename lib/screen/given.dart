@@ -1,6 +1,7 @@
 import 'package:money_tracker/components/timeline_item.dart';
 import 'package:flutter/material.dart';
 import 'package:money_tracker/constants/colors.dart';
+import 'package:money_tracker/constants/size_config.dart';
 
 import '../helper/transaction_helper.dart';
 
@@ -15,13 +16,17 @@ class Given extends StatefulWidget {
 class _GivenState extends State<Given> {
   TransactionHelper transactionHelper = TransactionHelper();
   List<Transaction> transactionList = [];
+  double totalGiven;
 
-  _allTransactionPortype() {
+  _allTransactionOfType() {
     transactionHelper
         .getAllTransactionBytype(type: "g", userId: widget.userId)
         .then((list) {
       setState(() {
         transactionList = list;
+        totalGiven = list
+            .map((e) => e.value)
+            .reduce((value, element) => value + element);
       });
       print("All Transaction: $transactionList");
     });
@@ -30,7 +35,7 @@ class _GivenState extends State<Given> {
   @override
   void initState() {
     super.initState();
-    _allTransactionPortype();
+    _allTransactionOfType();
   }
 
   @override
@@ -39,7 +44,7 @@ class _GivenState extends State<Given> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      // backgroundColor: Colors.green.withOpacity(0.8),
+      backgroundColor: COLORS.offWhite,
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Column(
@@ -53,7 +58,15 @@ class _GivenState extends State<Given> {
                 bottom: width * 0.05,
               ),
               height: height * 0.15,
-              color: Colors.amber,
+              decoration: BoxDecoration(
+                // color: COLORS.greenExtraLight,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.green[200], COLORS.offWhite],
+                  stops: [0, 1],
+                ),
+              ),
               alignment: Alignment.centerLeft,
               child: Container(
                 // padding: EdgeInsets.only(left: width * 0.05, top: width * 0.2),
@@ -82,18 +95,53 @@ class _GivenState extends State<Given> {
                     if (movReverse[index] == movReverse.last) {
                       return TimeLineItem(
                         transaction: transaction,
-                        colorItem: Colors.green[900],
+                        colorItem: COLORS.offGreen,
                         isLast: true,
                       );
                     } else {
                       return TimeLineItem(
                         transaction: transaction,
-                        colorItem: Colors.green[900],
+                        colorItem: COLORS.offGreen,
                         isLast: false,
                       );
                     }
                   },
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomSheet: Container(
+        height: SizeConfig.blockHeight * 10,
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeConfig.blockWidth * 8,
+        ),
+        decoration: BoxDecoration(
+          // color: COLORS.greenExtraLight,
+          gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [Colors.green[200], COLORS.offWhite],
+          stops: [0, 0.8],
+        ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "You get :",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: SizeConfig.blockWidth * 4.2,
+              ),
+            ),
+            Text(
+              totalGiven.toString(),
+              style: TextStyle(
+                color: COLORS.offGreen,
+                fontSize: width * 0.04,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

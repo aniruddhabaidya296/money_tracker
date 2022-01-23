@@ -34,18 +34,8 @@ class _CustomDialogState extends State<CustomDialog> {
   UserHelper userHelper = UserHelper();
 
   updateUser() async {
-    // await transactionHelper.getAllTransaction().then((list) {
-    //   setState(() {
-    //     transactionList = list;
-    //   });
-    //   userHelper.updateUser(
-    //     int.parse(widget.userId),
-    //   );
-    //   // print("All Transactions: $transactionList");
-    // });
-    // setState(() async {
-    transactionList = await transactionHelper.getAllTransactionOfPerson(widget.userId);
-    // });
+    transactionList =
+        await transactionHelper.getAllTransactionOfPerson(widget.userId);
     double netTotal = 0;
     for (var i in transactionList) {
       netTotal = netTotal + i.value;
@@ -81,187 +71,216 @@ class _CustomDialogState extends State<CustomDialog> {
     double width = MediaQuery.of(context).size.width;
 
     return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(width * 0.050)),
-        title: Text(
-          "Amount",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  // Text(
-                  //   "Rs ",
-                  //   style:
-                  //       TextStyle(color: Colors.white, fontSize: width * 0.06),
-                  // ),
-                  Flexible(
-                    child: TextField(
-                      controller: _controllervalue,
-                      maxLength: 7,
-                      style: TextStyle(fontSize: width * 0.05),
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      maxLines: 1,
-                      // textAlign: TextAlign.end,
-                      decoration: inputDecoration(text: "Enter Amount"),
-                    ),
-                  )
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(width * 0.02),
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            edit == false ? "Enter details" : "Edit",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.cancel_outlined),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
+      content: Container(
+        // decoration: BoxDecoration(color: Colors.red),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: SizeConfig.blockHeight * 2),
+              child: TextField(
+                controller: _controllervalue,
+                maxLength: 7,
+                style: TextStyle(fontSize: width * 0.05),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
                 ],
+                cursorHeight: SizeConfig.blockHeight * 2,
+                cursorColor: COLORS.black,
+                maxLines: 1,
+                // textAlign: TextAlign.end,
+                decoration: inputDecoration(text: "Amount"),
               ),
-              Row(
-                children: <Widget>[
-                  Radio(
-                    activeColor: COLORS.deepBlue,
-                    value: 1,
-                    groupValue: _groupValueRadio,
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {
-                        _groupValueRadio = value;
-                        _colorContainer = Colors.green[400];
-                        _colorTextButtom = Colors.green;
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("Given"),
-                  )
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Radio(
-                    activeColor: COLORS.deepBlue,
-                    value: 2,
-                    groupValue: _groupValueRadio,
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {
-                        _groupValueRadio = value;
-                        _colorContainer = Colors.red[300];
-                        _colorTextButtom = Colors.red[300];
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("Taken"),
-                  )
-                ],
-              ),
-              TextField(
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: SizeConfig.blockHeight * 2),
+              child: TextField(
                 controller: _controllerDesc,
                 maxLength: 20,
                 style: TextStyle(fontSize: width * 0.05),
                 keyboardType: TextInputType.text,
                 maxLines: 1,
+                cursorHeight: SizeConfig.blockHeight * 2,
+                cursorColor: COLORS.black,
                 textAlign: TextAlign.start,
-                decoration: inputDecoration(text: "Note"),
+                decoration: inputDecoration(text: "Remarks"),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: width * 0.09),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                    top: SizeConfig.blockHeight * 1,
+                    right: SizeConfig.blockWidth * 7,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            visualDensity:
+                                VisualDensity(horizontal: -4, vertical: -4),
+                            activeColor: _colorTextButtom,
+                            value: 1,
+                            groupValue: _groupValueRadio,
+                            onChanged: (value) {
+                              print(value);
+                              setState(() {
+                                _groupValueRadio = value;
+                                _colorContainer = Colors.green[400];
+                                _colorTextButtom = Colors.green;
+                              });
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: SizeConfig.blockWidth * 1),
+                            child: Text("Given"),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: SizeConfig.blockWidth * 2,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            visualDensity: VisualDensity(horizontal: -4),
+                            activeColor: _colorTextButtom,
+                            value: 2,
+                            groupValue: _groupValueRadio,
+                            onChanged: (value) {
+                              print(value);
+                              setState(() {
+                                _groupValueRadio = value;
+                                _colorContainer = Colors.red[300];
+                                _colorTextButtom = Colors.red[300];
+                              });
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: SizeConfig.blockWidth * 1),
+                            child: Text("Taken"),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: SizeConfig.blockHeight * 1,
+                  ),
+                  // alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_controllervalue.text.isNotEmpty &&
+                          _controllerDesc.text.isNotEmpty) {
+                        Transaction transaction = Transaction();
+                        String value;
+                        if (_controllervalue.text.contains(",")) {
+                          value = _controllervalue.text
+                              .replaceAll(RegExp(","), ".");
+                        } else {
+                          value = _controllervalue.text;
+                        }
+
+                        transaction.date = formatter.format(DateTime.now());
+                        transaction.description = _controllerDesc.text;
+                        transaction.userId = widget.userId;
+                        if (_groupValueRadio == 1) {
+                          transaction.value = double.parse(value);
+                          transaction.type = "g";
+                          if (widget.transaction != null) {
+                            transaction.id = widget.transaction.id;
+                          }
+                          edit == false
+                              ? transactionHelper.saveTransaction(transaction)
+                              : transactionHelper
+                                  .updateTransaction(transaction);
+                        }
+                        if (_groupValueRadio == 2) {
+                          transaction.value = double.parse("-" + value);
+                          transaction.type = "t";
+                          if (widget.transaction != null) {
+                            transaction.id = widget.transaction.id;
+                          }
+                          edit == false
+                              ? transactionHelper.saveTransaction(transaction)
+                              : transactionHelper
+                                  .updateTransaction(transaction);
+                        }
+                        updateUser();
                         Navigator.pop(context);
-                      },
+                        //initState();
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: SizeConfig.blockHeight * 1,
+                        horizontal: SizeConfig.blockWidth * 4,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(SizeConfig.blockWidth * 1),
+                        color: COLORS.deepBlue,
+                      ),
                       child: Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.black),
+                        edit == false ? "Add" : "Edit",
+                        style: TextStyle(
+                          color: Colors.white,
+                          // fontWeight: FontWeight.bold,
+                          fontSize: SizeConfig.blockWidth * 4,
+                        ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if (_controllervalue.text.isNotEmpty &&
-                            _controllerDesc.text.isNotEmpty) {
-                          Transaction transaction = Transaction();
-                          String value;
-                          if (_controllervalue.text.contains(",")) {
-                            value = _controllervalue.text
-                                .replaceAll(RegExp(","), ".");
-                          } else {
-                            value = _controllervalue.text;
-                          }
-
-                          transaction.date = formatter.format(DateTime.now());
-                          transaction.description = _controllerDesc.text;
-                          transaction.userId = widget.userId;
-                          if (_groupValueRadio == 1) {
-                            transaction.value = double.parse(value);
-                            transaction.type = "g";
-                            if (widget.transaction != null) {
-                              transaction.id = widget.transaction.id;
-                            }
-                            edit == false
-                                ? transactionHelper.saveTransaction(transaction)
-                                : transactionHelper
-                                    .updateTransaction(transaction);
-                          }
-                          if (_groupValueRadio == 2) {
-                            transaction.value = double.parse("-" + value);
-                            transaction.type = "t";
-                            if (widget.transaction != null) {
-                              transaction.id = widget.transaction.id;
-                            }
-                            edit == false
-                                ? transactionHelper.saveTransaction(transaction)
-                                : transactionHelper
-                                    .updateTransaction(transaction);
-                          }
-                          updateUser();
-                          Navigator.pop(context);
-                          //initState();
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            top: width * 0.02,
-                            bottom: width * 0.02,
-                            left: width * 0.03,
-                            right: width * 0.03),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: COLORS.deepBlue,
-                        ),
-                        child: Center(
-                          child: Text(
-                            edit == false ? "Confirm" : "Edit",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: width * 0.05),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              )
-            ],
-          ),
-        ));
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   InputDecoration inputDecoration({String text}) {
     return InputDecoration(
-      //hintText: "descrição",
-      hintText: text,
-      hintStyle: TextStyle(
+      // hintText: text,
+      label: Text(text),
+      labelStyle: TextStyle(
         color: COLORS.greyLight,
-        fontSize: SizeConfig.blockWidth * 4.2,
+        fontSize: SizeConfig.blockWidth * 4,
       ),
+      alignLabelWithHint: true,
+      // fillColor: COLORS.white,
+      counterText: "",
       //hintStyle: TextStyle(color: Colors.grey[400]),
       contentPadding: EdgeInsets.only(
           left: SizeConfig.blockWidth * 2,
@@ -269,17 +288,17 @@ class _CustomDialogState extends State<CustomDialog> {
           bottom: SizeConfig.blockWidth * 1,
           right: SizeConfig.blockWidth * 2),
 
-      focusedBorder: OutlineInputBorder(
+      focusedBorder: UnderlineInputBorder(
         borderRadius: BorderRadius.circular(SizeConfig.blockWidth * 2),
         borderSide: BorderSide(
-          color: COLORS.deepBlue,
+          color: COLORS.black,
           width: 2.0,
         ),
       ),
-      enabledBorder: OutlineInputBorder(
+      enabledBorder: UnderlineInputBorder(
         borderRadius: BorderRadius.circular(SizeConfig.blockWidth * 2),
         borderSide: BorderSide(
-          color: COLORS.deepBlue,
+          color: COLORS.greyExtraLight,
           width: 2.0,
         ),
       ),

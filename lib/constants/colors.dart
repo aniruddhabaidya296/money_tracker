@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 class COLORS {
   static const Color primary = Color(0xff99CCFF);
   static const Color deepBlue = Color(0xff00245e);
-  static const Color orangeMedium = Color(0xffFF4112);
+  static const Color redExtraLight = Color(0xffffe6e6);
   static const Color orangeLight = Color(0xffE6881C);
   static const Color orangishBrown = Color(0xff66291A);
   static const Color orangishbrownLight = Color(0xff4D2E27);
   static const Color orangishBrownDark = Color(0xff2E1F1C);
   static const Color orangeExtraLight = Color(0xffFA633F);
   static const Color leafGreen = Color(0xff93D94B);
-  static const Color greenExtraLight = Color(0xff96D952);
+  static const Color greenExtraLight = Color(0xffeeffe6);
   static const Color greenLight = Color(0xff85C24C);
   static const Color greenMedium = Color(0xff6EA13F);
   static const Color sapGreenLight = Color(0xff345218);

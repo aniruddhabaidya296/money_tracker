@@ -17,6 +17,7 @@ class Taken extends StatefulWidget {
 class _TakenState extends State<Taken> {
   TransactionHelper transactionHelper = TransactionHelper();
   List<Transaction> transactionList = [];
+  double totalTaken;
 
   _allTransactionByType() {
     transactionHelper
@@ -24,6 +25,9 @@ class _TakenState extends State<Taken> {
         .then((list) {
       setState(() {
         transactionList = list;
+        totalTaken = list
+            .map((e) => e.value)
+            .reduce((value, element) => value + element);
       });
       print("All transactions: $transactionList");
     });
@@ -41,7 +45,7 @@ class _TakenState extends State<Taken> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      // backgroundColor: Colors.redAccent.withOpacity(0.8),
+      backgroundColor: COLORS.offWhite,
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Column(
@@ -55,17 +59,17 @@ class _TakenState extends State<Taken> {
                 bottom: width * 0.05,
               ),
               height: height * 0.15,
-              color: Colors.amber,
+              decoration: BoxDecoration(
+                // color: COLORS.greenExtraLight,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.red[200], COLORS.offWhite],
+                  stops: [0, 1],
+                ),
+              ),
               alignment: Alignment.centerLeft,
-              // child: Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
               child: Container(
-                // padding: EdgeInsets.only(
-                //   left: width * 0.05,
-                //   top: width * 0.2,
-                //   bottom: width * 0.05,
-                // ),
                 child: Text(
                   "Taken",
                   style: TextStyle(
@@ -74,23 +78,6 @@ class _TakenState extends State<Taken> {
                       fontSize: width * 0.08),
                 ),
               ),
-              // Column(
-              //   children: [
-              //     Container(
-              //       // color: COLORS.red,
-              //       alignment: Alignment.center,
-              //       child: IconButton(
-              //         onPressed: () {},
-              //         icon: Icon(
-              //           Icons.home,
-              //           size: SizeConfig.blockWidth * 8,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              //   ],
-              // ),
             ),
             Container(
               child: SizedBox(
@@ -103,22 +90,56 @@ class _TakenState extends State<Taken> {
                   itemBuilder: (context, index) {
                     List movReverse = transactionList.reversed.toList();
                     Transaction transaction = movReverse[index];
-
                     if (movReverse[index] == movReverse.last) {
                       return TimeLineItem(
                         transaction: transaction,
-                        colorItem: Colors.red[900],
+                        colorItem: COLORS.red,
                         isLast: true,
                       );
                     } else {
                       return TimeLineItem(
                         transaction: transaction,
-                        colorItem: Colors.red[900],
+                        colorItem: COLORS.red,
                         isLast: false,
                       );
                     }
                   },
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomSheet: Container(
+        height: SizeConfig.blockHeight * 10,
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeConfig.blockWidth * 8,
+        ),
+        decoration: BoxDecoration(
+          // color: COLORS.greenExtraLight,
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Colors.red[200], COLORS.offWhite],
+            stops: [0, 0.8],
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "You owe :",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: SizeConfig.blockWidth * 4.2,
+              ),
+            ),
+            Text(
+              totalTaken.toString(),
+              style: TextStyle(
+                color: COLORS.red,
+                fontSize: width * 0.04,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
