@@ -15,6 +15,7 @@ import 'package:money_tracker/helper/user_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../helper/transaction_helper.dart';
+import '../models/user.dart';
 import 'helpers/gt_box.dart';
 import 'home.dart';
 
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   TransactionHelper transactionHelper = TransactionHelper();
   List<Transaction> transactionList = [];
   UserHelper userHelper = UserHelper();
-
+  User user;
   var dataAtual = new DateTime.now();
   var formatter = new DateFormat('dd-MM-yyyy');
   var formatterCalendar = new DateFormat('MM-yyyy');
@@ -93,6 +94,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  getUser() {
+    userHelper.getUser(int.parse(widget.userId)).then((u) {
+      setState(() {
+        user = u;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -101,6 +110,7 @@ class _HomePageState extends State<HomePage> {
     formattedDate = formatterCalendar.format(dataAtual);
     print(formattedDate);
     _getAllTransaction();
+    getUser();
 
     //_allMov();
   }
@@ -154,32 +164,47 @@ class _HomePageState extends State<HomePage> {
                         margin: EdgeInsets.only(
                           top: SizeConfig.blockHeight * 1,
                         ),
-                        // child: Text(
-                        //   "Current status: ",
-                        //   style: TextStyle(
-                        //     color: Colors.grey[600],
-                        //     fontSize: SizeConfig.blockWidth * 4.2,
-                        //   ),
-                        // ),
-                        child: GestureDetector(
-                          onTap: () async {
-                            // Navigator.pop(context);
-                            await Navigator.pushAndRemoveUntil(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, a1, a2) {
-                                  return BlocProvider(
-                                    create: (context) =>
-                                        UserBloc()..add(FetchAllUser()),
-                                    child: Home(),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  // Navigator.pop(context);
+                                  await Navigator.pushAndRemoveUntil(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, a1, a2) {
+                                        return BlocProvider(
+                                          create: (context) =>
+                                              UserBloc()..add(FetchAllUser()),
+                                          child: Home(),
+                                        );
+                                      },
+                                      opaque: true,
+                                    ),
+                                    (route) => false,
                                   );
                                 },
-                                opaque: true,
+                                child: Icon(Icons.arrow_back_ios),
                               ),
-                              (route) => false,
-                            );
-                          },
-                          child: Icon(Icons.arrow_back_ios),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: SizeConfig.blockWidth * 2),
+                              alignment: Alignment.center,
+                              child: Text(
+                                user == null
+                                    ? ''
+                                    : user.personName.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: SizeConfig.blockWidth * 5,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),

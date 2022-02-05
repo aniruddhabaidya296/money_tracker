@@ -22,12 +22,14 @@ class _GivenState extends State<Given> {
     transactionHelper
         .getAllTransactionBytype(type: "g", userId: widget.userId)
         .then((list) {
-      setState(() {
-        transactionList = list;
-        totalGiven = list
-            .map((e) => e.value)
-            .reduce((value, element) => value + element);
-      });
+      if (list.isNotEmpty) {
+        setState(() {
+          transactionList = list;
+          totalGiven = list
+              .map((e) => e.value)
+              .reduce((value, element) => value + element);
+        });
+      }
       print("All Transaction: $transactionList");
     });
   }
@@ -120,11 +122,11 @@ class _GivenState extends State<Given> {
         decoration: BoxDecoration(
           // color: COLORS.greenExtraLight,
           gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Colors.green[200], COLORS.offWhite],
-          stops: [0, 0.8],
-        ),
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Colors.green[200], COLORS.offWhite],
+            stops: [0, 0.8],
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +139,7 @@ class _GivenState extends State<Given> {
               ),
             ),
             Text(
-              totalGiven.toString(),
+              totalGiven == null ? '0' : totalGiven.toString(),
               style: TextStyle(
                 color: COLORS.offGreen,
                 fontSize: width * 0.04,

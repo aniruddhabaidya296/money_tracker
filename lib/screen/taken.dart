@@ -23,12 +23,14 @@ class _TakenState extends State<Taken> {
     transactionHelper
         .getAllTransactionBytype(type: "t", userId: widget.userId)
         .then((list) {
-      setState(() {
-        transactionList = list;
-        totalTaken = list
-            .map((e) => e.value)
-            .reduce((value, element) => value + element);
-      });
+      if (list.isNotEmpty) {
+        setState(() {
+          transactionList = list;
+          totalTaken = list
+              .map((e) => e.value)
+              .reduce((value, element) => value + element);
+        });
+      }
       print("All transactions: $transactionList");
     });
   }
@@ -135,7 +137,7 @@ class _TakenState extends State<Taken> {
               ),
             ),
             Text(
-              totalTaken.toString(),
+              totalTaken == null ? '0' : totalTaken.toString(),
               style: TextStyle(
                 color: COLORS.red,
                 fontSize: width * 0.04,
