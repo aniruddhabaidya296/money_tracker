@@ -80,8 +80,12 @@ class TransactionHelper {
     print(transaction.toString());
     Database dbTransaction = await db;
     return await dbTransaction.update(
-        GlobalConstants.transactionTABLE, transaction.toMap(),
-        where: "${GlobalConstants.idColumn} =?", whereArgs: [transaction.id]);
+      GlobalConstants.transactionTABLE,
+      transaction.toMap(),
+      where:
+          "${GlobalConstants.idColumn} = ? AND ${GlobalConstants.userId} = ?",
+      whereArgs: [transaction.id,transaction.userId]
+    );
   }
 
   Future<List> getAllTransaction() async {
@@ -170,11 +174,11 @@ class Transaction {
 
   Map toMap() {
     Map<String, dynamic> map = {
-      GlobalConstants.valueColumn: value,
-      GlobalConstants.userId: userId,
-      GlobalConstants.dateColumn: date,
-      GlobalConstants.typeColumn: type,
-      GlobalConstants.descriptionColumn: description,
+      GlobalConstants.valueColumn: this.value,
+      GlobalConstants.userId: this.userId,
+      GlobalConstants.dateColumn: this.date,
+      GlobalConstants.typeColumn: this.type,
+      GlobalConstants.descriptionColumn: this.description,
     };
     if (id != null) {
       map[GlobalConstants.idColumn] = id;
@@ -183,6 +187,6 @@ class Transaction {
   }
 
   String toString() {
-    return "Transaction(id: $id, personName, $userId, value: $value, data: $date, type: $type, desc: $description, )";
+    return "Transaction(id: $id, userId: $userId, value: $value, data: $date, type: $type, desc: $description, )";
   }
 }

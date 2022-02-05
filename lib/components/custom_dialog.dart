@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
 import 'package:money_tracker/constants/colors.dart';
+import 'package:money_tracker/constants/custom_log.dart';
 import 'package:money_tracker/constants/size_config.dart';
 import 'package:money_tracker/helper/user_helper.dart';
 import 'package:money_tracker/screen/home_page.dart';
@@ -33,14 +34,13 @@ class _CustomDialogState extends State<CustomDialog> {
   TransactionHelper transactionHelper = TransactionHelper();
   UserHelper userHelper = UserHelper();
 
-  updateUser() async {
-    transactionList =
-        await transactionHelper.getAllTransactionOfPerson(widget.userId);
+  updateUser({String userId}) async {
+    transactionList = await transactionHelper.getAllTransactionOfPerson(userId);
     double netTotal = 0;
     for (var i in transactionList) {
       netTotal = netTotal + i.value;
     }
-    userHelper.updateUser(int.parse(widget.userId), netTotal);
+    userHelper.updateUser(int.parse(userId), netTotal);
   }
 
   @override
@@ -210,10 +210,16 @@ class _CustomDialogState extends State<CustomDialog> {
                         } else {
                           value = _controllervalue.text;
                         }
-
-                        transaction.date = formatter.format(DateTime.now());
-                        transaction.description = _controllerDesc.text;
-                        transaction.userId = widget.userId;
+                        if (edit == false) {
+                          transaction.date = formatter.format(DateTime.now());
+                          transaction.description = _controllerDesc.text;
+                          transaction.userId = widget.userId;
+                        } else if (edit == true) {
+                          transaction.date = widget.transaction.date;
+                          transaction.description = _controllerDesc.text;
+                          transaction.userId = widget.transaction.userId;
+                        }
+                        customLog("User id is ${transaction.userId}");
                         if (_groupValueRadio == 1) {
                           transaction.value = double.parse(value);
                           transaction.type = "g";
@@ -236,7 +242,8 @@ class _CustomDialogState extends State<CustomDialog> {
                               : transactionHelper
                                   .updateTransaction(transaction);
                         }
-                        updateUser();
+                        updateUser(
+                            userId: edit ? transaction.userId : widget.userId);
                         Navigator.pop(context);
                         //initState();
                       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_tracker/constants/custom_log.dart';
 import 'package:money_tracker/constants/size_config.dart';
 
 import '../helper/transaction_helper.dart';
@@ -131,15 +132,15 @@ class TransactionCard extends StatelessWidget {
         });
   }
 
-  _dialogEdit(BuildContext context, double width, Transaction movimentacao) {
-    print(
-      movimentacao.toString(),
+  _dialogEdit(BuildContext context, double width, Transaction t) {
+    customLog(
+      "Edit transaction ${t.toMap().toString()}",
     );
     showDialog(
         context: context,
         builder: (context) {
           return CustomDialog(
-            transaction: movimentacao,
+            transaction: t,
           );
         });
   }
