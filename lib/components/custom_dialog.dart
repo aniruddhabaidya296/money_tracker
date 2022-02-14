@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
 import 'package:money_tracker/constants/colors.dart';
 import 'package:money_tracker/constants/custom_log.dart';
@@ -24,7 +25,7 @@ class CustomDialog extends StatefulWidget {
 class _CustomDialogState extends State<CustomDialog> {
   var formatter = new DateFormat('dd-MM-yyyy');
   bool edit;
-
+  bool reminder = false;
   int _groupValueRadio = 1;
   Color _colorContainer = Colors.green[400];
   Color _colorTextButtom = Colors.green;
@@ -65,6 +66,11 @@ class _CustomDialogState extends State<CustomDialog> {
     }
     print(" edit -> $edit");
   }
+
+  var _textStyle = TextStyle(
+    color: COLORS.greyMedium,
+    fontSize: SizeConfig.blockWidth * 4,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +134,47 @@ class _CustomDialogState extends State<CustomDialog> {
                 decoration: inputDecoration(text: "Remarks"),
               ),
             ),
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: SizeConfig.blockHeight * 2,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      left: SizeConfig.blockWidth * 2,
+                      right: SizeConfig.blockWidth * 9,
+                    ),
+                    child: Text(
+                      "Set reminder",
+                      style: TextStyle(
+                        color: COLORS.greyMedium,
+                        fontSize: SizeConfig.blockWidth * 4,
+                      ),
+                    ),
+                  ),
+                  FlutterSwitch(
+                    width: SizeConfig.blockWidth * 10,
+                    height: SizeConfig.blockHeight * 2.5,
+                    toggleSize: 20,
+                    toggleColor: COLORS.deepBlue,
+                    padding: 0,
+                    // inactiveToggleColor: COLORS.greyExtraLight,
+                    inactiveColor: COLORS.greyExtraLight,
+                    activeColor: COLORS.primary,
+                    value: reminder,
+                    // showOnOff: true,
+                    onToggle: (val) {
+                      setState(() {
+                        reminder = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -160,7 +207,10 @@ class _CustomDialogState extends State<CustomDialog> {
                           Padding(
                             padding: EdgeInsets.only(
                                 left: SizeConfig.blockWidth * 1),
-                            child: Text("Given"),
+                            child: Text(
+                              "Given",
+                              style: _textStyle,
+                            ),
                           )
                         ],
                       ),
@@ -186,7 +236,10 @@ class _CustomDialogState extends State<CustomDialog> {
                           Padding(
                             padding: EdgeInsets.only(
                                 left: SizeConfig.blockWidth * 1),
-                            child: Text("Taken"),
+                            child: Text(
+                              "Taken",
+                              style: _textStyle,
+                            ),
                           )
                         ],
                       ),

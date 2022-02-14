@@ -130,18 +130,32 @@ class _TakenState extends State<Taken> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "You owe :",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: SizeConfig.blockWidth * 4.2,
-              ),
-            ),
-            Text(
-              totalTaken == null ? '0' : totalTaken.toString(),
+              totalTaken == null
+                  ? 'Total: 0'
+                  : "Totale: ${totalTaken.toString()}",
               style: TextStyle(
                 color: COLORS.red,
                 fontSize: width * 0.04,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  SizeConfig.blockWidth * 2,
+                ),
+              ),
+              color: COLORS.redMedium,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: Text(
+                'Pay now',
+                style: TextStyle(
+                  color: COLORS.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

@@ -2,31 +2,36 @@ import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_tracker/blocs/user_bloc/user_bloc.dart';
 import 'package:money_tracker/screen/home.dart';
-import 'package:money_tracker/screen/initial_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:page_transition/page_transition.dart';
-
 import 'constants/colors.dart';
 import 'constants/size_config.dart';
 
 main() {
-  initializeDateFormatting().then((_) {
-    runApp(MaterialApp(
-      // home: InitialPage(),
-      theme: ThemeData(
-        pageTransitionsTheme: PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoWillPopScopePageTransionsBuilder(),
-          },
+  initializeDateFormatting().then(
+    (_) {
+      runApp(
+        MultiBlocProvider(
+          providers: [BlocProvider(create: (context) => UserBloc())],
+          child: MaterialApp(
+            // home: InitialPage(),
+            theme: ThemeData(
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                  TargetPlatform.iOS:
+                      CupertinoWillPopScopePageTransionsBuilder(),
+                },
+              ),
+            ),
+            home: IntroSplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
         ),
-      ),
-      home: IntroSplashScreen(),
-      debugShowCheckedModeBanner: false,
-    ));
-  });
+      );
+    },
+  );
 }
 
 class IntroSplashScreen extends StatefulWidget {
